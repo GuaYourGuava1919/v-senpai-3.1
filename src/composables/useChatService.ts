@@ -4,10 +4,12 @@ import {
   collection,
   doc,
   getDoc,
+  getDocs,
   onSnapshot,
   orderBy,
   query,
   serverTimestamp,
+  where,
 } from 'firebase/firestore'
 import { getDatabase, ref as dbRef, get as dbGet, set as dbSet } from 'firebase/database'
 import { auth, db } from '@/config/firebaseConfig'
@@ -21,7 +23,7 @@ interface ChatMessage {
   feedback?: string
 }
 
-interface ChatPair {
+export interface ChatPair {
   user: string
   ai: string
   metadata: string
@@ -153,7 +155,7 @@ export function useChatService(
       const docSnap = await getDoc(doc(db, 'users', uid))
       if (docSnap.exists()) accessToken.value = docSnap.data().accessToken
     } catch (error) {
-      console.error('使用者資料讀取失敗:', error)
+      console.error('使用者資料s讀取失敗:', error)
     }
   }
 
@@ -209,11 +211,38 @@ export function useChatService(
     })
   }
 
+  const fetchChatHistoryFromFirestore = async (uid: string): Promise<ChatPair[]> => {
+    try {
+      const convoRef = collection(db, `users/${uid}/conversation-1`)
+      const q = query(convoRef, orderBy('createdAt', 'asc'))
+
+      const snapshot = await getDocs(q)
+      const pairs: ChatPair[] = []
+
+      for (const doc of snapshot.docs) {
+        const data = doc.data()
+        // console.log('讀取 Firestore 資料:', data)
+        if (Array.isArray(data.messagePairs)) {
+          data.messagePairs.forEach((pair: any) => {
+            const { user, ai, metadata } = pair
+            pairs.push({ user, ai, metadata })
+          })
+        }
+      }
+      // console.log('✅ 讀取 Firestore 成功:', pairs)
+      return pairs
+    } catch (e) {
+      console.error('❌ Firestore 讀取失敗:', e)
+      return []
+    }
+  }
   return {
     accessToken,
     sendMessage,
     handleSuggestedQuestion,
     readUserData,
     watchFirestoreMessages,
+    fetchChatHistory, // ⬅️ 加上這一行
+    fetchChatHistoryFromFirestore,
   }
 }

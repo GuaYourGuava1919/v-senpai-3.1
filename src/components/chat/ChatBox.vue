@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-25 px-8 space-y-2 overflow-y-auto bg-gray-50">
+  <div ref="chatContainer" class="pt-25 px-8 space-y-2 overflow-y-auto bg-gray-50 h-full">
     <ChatBubble
       v-for="(msg, index) in messages"
       :key="index"
@@ -12,15 +12,10 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue'
-import { getAuth, onAuthStateChanged } from 'firebase/auth'
-import { useChatHistory } from '@/composables/useChatHistory'
+import { ref, watch, nextTick } from 'vue'
 import ChatBubble from '@/components/chat/ChatBubble.vue'
 
-// const { messages, loadChatHistory } = useChatHistory()
-// const auth = getAuth()
-
-defineProps<{
+const props = defineProps<{
   messages: {
     sender: string
     text: string
@@ -31,18 +26,25 @@ defineProps<{
   }[]
 }>()
 
-// onMounted(() => {
-//   onAuthStateChanged(auth, async (user) => {
-//     if (user?.uid) {
-//       console.log('載入聊天記錄:', user.uid)
-//       await loadChatHistory(user.uid)
-//       console.log('訊息數量:', messages.value.length)
-//       console.log('訊息內容:', messages.value)
-//     } else {
-//       console.warn('尚未登入，無法載入聊天紀錄')
-//     }
-//   })
-// })
-</script>
+const chatContainer = ref<HTMLElement | null>(null)
+const previousHeight = ref(0)
 
-<style scoped></style>
+watch(
+  () => props.messages.length,
+  async () => {
+    const el = chatContainer.value
+    if (!el) return
+
+    // 儲存原本的滾動高度
+    previousHeight.value = el.scrollHeight
+
+    await nextTick()
+
+    const newHeight = el.scrollHeight
+    const heightDiff = newHeight - previousHeight.value
+
+    // 自然往下滾一格
+    el.scrollTop += heightDiff
+  },
+)
+</script>

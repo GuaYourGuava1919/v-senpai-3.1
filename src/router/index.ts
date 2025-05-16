@@ -1,49 +1,81 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
-import { onAuthStateChanged } from 'firebase/auth'
-import { auth } from '@/config/firebaseConfig'
+import { onAuthStateChanged, getAuth } from 'firebase/auth'
+import { getDoc, doc } from 'firebase/firestore'
+import { auth, db } from '@/config/firebaseConfig'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
-    {
-      path: '/',
-      name: 'home',
-      component: HomeView,
-    },
+    { path: '/', name: 'home', component: HomeView },
     {
       path: '/chat',
       name: 'chat',
       component: () => import('../views/ChatView.vue'),
-      meta: { requiresAuth: true }, // ← 限制需要登入
+      meta: { requiresAuth: true },
+    },
+    { path: '/feedback', name: 'feedback', component: () => import('../views/FeedbackView.vue') },
+    { path: '/personal', name: 'personal', component: () => import('../views/PersonalView.vue') },
+    {
+      path: '/feedback-review',
+      component: () => import('@/views/FeedbackReviewView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
     },
     {
-      path: '/feedback',
-      name: 'feedback',
-      component: () => import('../views/FeedbackView.vue'),
+      path: '/signup-list',
+      name: 'signup-list',
+      component: () => import('@/views/SignupListView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
     },
     {
-      path: '/personal',
-      name: 'personal',
-      component: () => import('../views/PersonalView.vue'),
+      path: '/user-messages/:uid',
+      name: 'user-messages',
+      component: () => import('@/views/UserMessagesView.vue'),
+      meta: { requiresAuth: true, requiresAdmin: true },
     },
   ],
 })
-// 簡單的登入快取（避免重複 onAuthStateChanged）
+
+// 快取目前使用者
 let currentUser: any = null
 onAuthStateChanged(auth, (user) => {
   currentUser = user
 })
 
-router.beforeEach((to, from, next) => {
-  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
-
-  if (requiresAuth && !currentUser) {
-    // 如果需要登入但未登入，導向首頁或登入頁
-    next({ path: '/' })
-  } else {
-    next()
+// 檢查是否為 admin
+const isAdmin = async (uid: string) => {
+  try {
+    const docSnap = await getDoc(doc(db, 'users', uid))
+    return docSnap.exists() && docSnap.data().role === 'admin'
+  } catch (err) {
+    console.error('讀取使用者角色錯誤：', err)
+    return false
   }
+}
+
+router.beforeEach(async (to, from, next) => {
+  const auth = getAuth()
+
+  if (!auth.currentUser) {
+    await new Promise((resolve) => onAuthStateChanged(auth, resolve))
+  }
+
+  const user = auth.currentUser
+
+  // 未登入但進入需要登入的頁面
+  if (to.meta.requiresAuth && !user) {
+    return next('/')
+  }
+
+  // 權限不足
+  if (to.meta.requiresAdmin && user) {
+    const isUserAdmin = await isAdmin(user.uid)
+    if (!isUserAdmin) {
+      return next('/')
+    }
+  }
+
+  return next()
 })
 
 export default router

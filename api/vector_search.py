@@ -12,7 +12,7 @@ load_dotenv()
 
 # 初始化 Pinecone
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
-index_name = "0506-data-v1"
+index_name = "0509-data"
 index = pc.Index(index_name)
 
 # 初始化 Cohere

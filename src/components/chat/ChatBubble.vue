@@ -1,5 +1,5 @@
 <template>
-  <div class="flex mb-2" :class="isSelf ? 'justify-end' : 'justify-start'">
+  <div class="flex my-5" :class="isSelf ? 'justify-end' : 'justify-start'">
     <div class="flex flex-col" :class="isSelf ? 'items-end' : 'items-start'">
       <div
         class="max-w-md px-4 py-2 rounded-2xl shadow-md whitespace-pre-wrap break-words"
