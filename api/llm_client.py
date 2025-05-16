@@ -6,14 +6,14 @@ from google.genai import types
 import json
 
 # deploy開
-# from api.vector_search import (
-#     vector_search_light,
-# )
-
-#local開
-from vector_search import (
+from api.vector_search import (
     vector_search_light,
 )
+
+#local開
+# from vector_search import (
+#     vector_search_light,
+# )
 
 # 環境變數設定
 GROQ_MODEL = "llama-3.3-70b-versatile"
@@ -210,5 +210,5 @@ def get_openai_response(token: str, user_input: str, history: object) -> str:
 
 if __name__ == "__main__":
     user_input = "關於林芯緹有沒有什麼資料呢？"
-    response = get_openai_response("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", user_input, [])
+    response = get_openai_response("", user_input, [])
     print(f"回應: {response}")

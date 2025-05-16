@@ -6,10 +6,10 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # deploy 開
-# from api.llm_client import get_openai_response
+from api.llm_client import get_openai_response
 
 # local 開
-from llm_client import get_groq_response, get_openai_response
+# from llm_client import get_groq_response, get_openai_response
 
 app = Flask(__name__)
 CORS(app)  # 啟用 CORS

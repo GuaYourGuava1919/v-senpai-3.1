@@ -91,7 +91,7 @@ export function useChatHistory() {
       })
 
       messages.value = [defaultGreetingMessage, ...chatHistory]
-      console.log('✅ Chat history loaded:', messages.value)
+      // console.log('✅ Chat history loaded:', messages.value)
     } catch (error) {
       console.error('❌ Failed to load chat history:', error)
       errorMessage.value = '無法載入聊天記錄'

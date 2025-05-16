@@ -33,7 +33,7 @@ export function useAuth() {
     }
 
     user.value = userInfo
-    console.log('User signed in:', user.value)
+    // console.log('User signed in:', user.value)
   }
 
   const logout = async () => {

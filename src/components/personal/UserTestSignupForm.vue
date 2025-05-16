@@ -83,6 +83,6 @@ onMounted(async () => {
   } else {
     user.value = { hasSignedUp: false }
   }
-  console.log('User Info:', result)
+  // console.log('User Info:', result)
 })
 </script>

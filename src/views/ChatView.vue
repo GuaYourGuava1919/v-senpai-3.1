@@ -57,7 +57,7 @@ const defaultMessage = {
 // 初始化
 onAuthStateChanged(auth, (user) => {
   if (user) {
-    console.log('✅ 已登入:', user.uid)
+    // console.log('✅ 已登入:', user.uid)
     readUserData(user.uid)
     watchFirestoreMessages(user.uid, messages, defaultMessage)
   } else {
