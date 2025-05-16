@@ -1,33 +1,10 @@
+// ✅ useChatService.ts - 主邏輯整合點
 import { ref, type Ref } from 'vue'
-import {
-  addDoc,
-  collection,
-  doc,
-  getDoc,
-  getDocs,
-  onSnapshot,
-  orderBy,
-  query,
-  serverTimestamp,
-  where,
-} from 'firebase/firestore'
-import { getDatabase, ref as dbRef, get as dbGet, set as dbSet } from 'firebase/database'
-import { auth, db } from '@/config/firebaseConfig'
-
-interface ChatMessage {
-  sender: string
-  text: string
-  createdAt: string
-  metadata?: string
-  docid?: string
-  feedback?: string
-}
-
-export interface ChatPair {
-  user: string
-  ai: string
-  metadata: string
-}
+import { auth } from '@/config/firebaseConfig'
+import type { ChatMessage, ChatPair } from './services/types'
+import { fetchChatHistory, saveChatHistoryToRTDB } from './services/chatHistoryService'
+import { saveConversationToFirestore } from './services/chatFirestoreService'
+import { readUserAccessToken } from './services/userService'
 
 export function useChatService(
   messages: Ref<ChatMessage[]>,
@@ -42,44 +19,7 @@ export function useChatService(
     sendMessage()
   }
 
-  const fetchChatHistory = async (uid: string): Promise<ChatPair[]> => {
-    try {
-      const dbInstance = getDatabase()
-      const chatHistoryRef = dbRef(dbInstance, `users/${uid}/chatHistory`)
-      const snapshot = await dbGet(chatHistoryRef)
-
-      if (snapshot.exists()) {
-        const data = snapshot.val() as ChatPair[]
-        console.log('✅ 讀取RTDB前三組對話:', data)
-        return Array.isArray(data) ? data : []
-      } else {
-        console.warn('⚠️ RTDB前三組對話不存在')
-        return []
-      }
-    } catch (error) {
-      console.error('❌ 讀取 RTDB 發生錯誤:', error)
-      return []
-    }
-  }
-
-  const saveChatHistoryToRTDB = async (uid: string, history: ChatPair[]) => {
-    try {
-      const dbInstance = getDatabase()
-      const chatHistoryRef = dbRef(dbInstance, `users/${uid}/chatHistory`)
-      await dbSet(chatHistoryRef, history.slice(-3))
-      console.log('✅ 儲存至 RTDB 成功')
-    } catch (error) {
-      console.error('❌ 儲存至RTDB失敗:', error)
-    }
-  }
-
   const sendMessage = async () => {
-    console.log('📨 觸發 sendMessage:', {
-      text: input.value,
-      token: accessToken.value,
-      uid: auth.currentUser?.uid,
-    })
-
     const userText = input.value.trim()
     const uid = auth.currentUser?.uid
     if (!userText || !accessToken.value || !uid) return
@@ -89,13 +29,6 @@ export function useChatService(
     input.value = ''
     isThinking.value = true
 
-    // const loadingMsg: ChatMessage = {
-    //   sender: 'ai',
-    //   text: '⏳ AI 正在思考...',
-    //   createdAt: timestamp,
-    // }
-    // messages.value.push(loadingMsg)
-    console.log('✅ 使用者訊息:', userText)
     try {
       const history = await fetchChatHistory(uid)
 
@@ -122,7 +55,7 @@ export function useChatService(
       }
 
       messagePairs.value.push({ user: userText, ai: aiText, metadata })
-      await saveConversation(messagePairs.value)
+      await saveConversationToFirestore(uid, messagePairs.value)
       await saveChatHistoryToRTDB(uid, [...history, ...messagePairs.value])
       messagePairs.value = []
     } catch (err: any) {
@@ -137,112 +70,15 @@ export function useChatService(
     }
   }
 
-  const saveConversation = async (pairs: ChatPair[]) => {
-    const uid = auth.currentUser?.uid
-    if (!uid) return
-    try {
-      await addDoc(collection(db, `/users/${uid}/conversation-1`), {
-        messagePairs: pairs,
-        createdAt: serverTimestamp(),
-      })
-    } catch (e) {
-      console.error('❌對話儲存失敗', e)
-    }
-  }
-
   const readUserData = async (uid: string) => {
-    try {
-      const docSnap = await getDoc(doc(db, 'users', uid))
-      if (docSnap.exists()) accessToken.value = docSnap.data().accessToken
-    } catch (error) {
-      console.error('使用者資料s讀取失敗:', error)
-    }
+    const token = await readUserAccessToken(uid)
+    if (token) accessToken.value = token
   }
 
-  const watchFirestoreMessages = (uid: string) => {
-    const convoRef = collection(db, `/users/${uid}/conversation-1`)
-    const q = query(convoRef, orderBy('createdAt'))
-
-    onSnapshot(q, (snapshot) => {
-      const loadedMessages: ChatMessage[] = []
-      snapshot.forEach((docSnap) => {
-        const data = docSnap.data() as {
-          messagePairs: ChatPair[]
-          createdAt?: any
-          feedback?: string
-        }
-
-        const timestamp =
-          data.createdAt?.toDate?.()?.toLocaleString?.() ?? new Date().toLocaleString()
-
-        data.messagePairs.forEach((pair) => {
-          loadedMessages.push({
-            docid: docSnap.id,
-            sender: 'user',
-            text: pair.user,
-            createdAt: timestamp,
-          })
-          loadedMessages.push({
-            docid: docSnap.id,
-            sender: 'ai',
-            text: pair.ai,
-            createdAt: timestamp,
-            metadata: pair.metadata,
-            feedback: data.feedback ?? undefined,
-          })
-        })
-      })
-
-      if (messages.value.length === 0) {
-        messages.value.push({
-          sender: 'ai',
-          text:
-            '👋 嗨～我是你的學長姊模擬助理 V-Senpai！\n' +
-            '我整理了歷屆學長姊在「系統分析與設計」課程中的經驗與建議，\n' +
-            '不管是選題、合作、技術、還是報告準備，你都可以問我唷～\n' +
-            '如果不知道從哪裡開始，也可以點選下方的引導問題來試試看 👇',
-          createdAt: new Date().toISOString(),
-          metadata: '這是開場訊息',
-          docid: 'init-msg',
-        })
-      }
-
-      messages.value.push(...loadedMessages)
-    })
-  }
-
-  const fetchChatHistoryFromFirestore = async (uid: string): Promise<ChatPair[]> => {
-    try {
-      const convoRef = collection(db, `users/${uid}/conversation-1`)
-      const q = query(convoRef, orderBy('createdAt', 'asc'))
-
-      const snapshot = await getDocs(q)
-      const pairs: ChatPair[] = []
-
-      for (const doc of snapshot.docs) {
-        const data = doc.data()
-        // console.log('讀取 Firestore 資料:', data)
-        if (Array.isArray(data.messagePairs)) {
-          data.messagePairs.forEach((pair: any) => {
-            const { user, ai, metadata } = pair
-            pairs.push({ user, ai, metadata })
-          })
-        }
-      }
-      // console.log('✅ 讀取 Firestore 成功:', pairs)
-      return pairs
-    } catch (e) {
-      console.error('❌ Firestore 讀取失敗:', e)
-      return []
-    }
-  }
   return {
     accessToken,
     sendMessage,
     handleSuggestedQuestion,
     readUserData,
-    watchFirestoreMessages,
-    fetchChatHistory, // ⬅️ 加上這一行
-    fetchChatHistoryFromFirestore,
   }
 }

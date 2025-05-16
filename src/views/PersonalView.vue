@@ -1,6 +1,5 @@
 <template>
-  <div class="user-settings-page">
-    <h1>👤 個人設置</h1>
+  <div class="pt-25">
     <!-- 個人資料修改 -->
     <UserProfileSettings />
     <hr class="divider" />

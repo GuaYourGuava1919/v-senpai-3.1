@@ -3,7 +3,7 @@
     <h2 class="text-2xl font-bold mb-2">🧪 參與使用者受測計畫</h2>
     <p class="mb-6 text-gray-600">誠摯邀請你協助我們優化 V-Senpai 系統。</p>
 
-    <form v-if="!submitted" @submit.prevent="handleSubmit" class="space-y-6">
+    <form v-if="user && !user.hasSignedUp" class="space-y-6">
       <div>
         <label class="block mb-1 font-medium">真實姓名</label>
         <input
@@ -62,16 +62,25 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
+// 🔁 更新為新的來源
+import { getUserInfo } from '@/composables/services/userService'
 
 const name = ref('')
 const organization = ref('')
 const contactMethod = ref('')
 const contactInfo = ref('')
-const submitted = ref(false)
 const showConsent = ref(false)
 
-function handleSubmit() {
-  submitted.value = true
-}
+const user = ref<{ hasSignedUp: boolean } | null>(null)
+
+onMounted(async () => {
+  const result = await getUserInfo()
+  if (result && typeof result.hasSignedUp === 'boolean') {
+    user.value = { hasSignedUp: result.hasSignedUp }
+  } else {
+    user.value = { hasSignedUp: false }
+  }
+  console.log('User Info:', result)
+})
 </script>

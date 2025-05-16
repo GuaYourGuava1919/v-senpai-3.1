@@ -33,8 +33,8 @@
 <script setup lang="ts">
 import { useRoute } from 'vue-router'
 import { ref, onMounted } from 'vue'
-import type { ChatPair } from '@/composables/useChatService'
-import { useChatService } from '@/composables/useChatService'
+import type { ChatPair } from '@/composables/services/types' // ✅ 路徑改為 types
+import { fetchChatHistoryFromFirestore } from '@/composables/services/chatFirestoreService' // ✅ 匯入正確來源
 
 const route = useRoute()
 const uid = route.params.uid as string
@@ -42,11 +42,6 @@ const name = (route.query.name as string) || ''
 const expanded = ref<boolean[]>([]) // 控制每一則對話是否展開
 
 const chatPairs = ref<ChatPair[]>([])
-const messages = ref([])
-const input = ref('')
-const isThinking = ref(false)
-
-const { fetchChatHistoryFromFirestore } = useChatService(messages, input, isThinking)
 
 onMounted(async () => {
   chatPairs.value = await fetchChatHistoryFromFirestore(uid)

@@ -1,28 +1,39 @@
 <template>
-  <div class="feedback-review">
-    <h1>📋 使用者回饋總覽</h1>
+  <div class="max-w-4xl mx-auto pt-25 py-10">
+    <h1 class="text-3xl font-bold text-center mb-8">📋 使用者回饋總覽</h1>
 
-    <div v-if="loading">讀取中...</div>
-    <div v-else-if="feedbacks.length === 0">目前沒有回饋資料</div>
+    <div v-if="loading" class="text-center text-gray-600">讀取中...</div>
+    <div v-else-if="feedbacks.length === 0" class="text-center text-gray-500">目前沒有回饋資料</div>
 
-    <div v-for="(item, index) in feedbacks" :key="index" class="feedback-item">
-      <h2>回饋 #{{ index + 1 }}</h2>
-      <p><strong> 姓名：</strong>{{ item.name }}</p>
-      <p><strong> 學號：</strong>{{ item.studentId }}</p>
-      <p><strong> 時間：</strong>{{ formatDate(item.createdAt) }}</p>
-      <p><strong> 最喜歡的部分：</strong>{{ item.favoritePart }}</p>
-      <p><strong> 改進建議：</strong>{{ item.suggestion }}</p>
-      <p><strong> 錯誤或問題：</strong>{{ item.errorFeedback }}</p>
+    <div
+      v-for="(item, index) in feedbacks"
+      :key="index"
+      class="mb-8 bg-gray-50 p-6 rounded-lg border border-gray-300"
+    >
+      <h2 class="text-xl font-semibold mb-4">回饋 #{{ index + 1 }}</h2>
+      <p><span class="font-medium">姓名：</span>{{ item.uid }}</p>
+      <p><span class="font-medium">時間：</span>{{ formatDate(item.createdAt) }}</p>
+      <p><span class="font-medium">最喜歡的部分：</span>{{ item.favoritePart }}</p>
+      <p><span class="font-medium">改進建議：</span>{{ item.suggestion }}</p>
+      <p><span class="font-medium">錯誤或問題：</span>{{ item.errorFeedback }}</p>
 
-      <div v-if="item.screenshotBase64">
-        <p><strong>📷 上傳截圖：</strong></p>
-        <img :src="item.screenshotBase64" alt="上傳圖片" class="preview-img" />
+      <div v-if="item.screenshotBase64" class="mt-4">
+        <p class="font-medium mb-1">📷 上傳截圖：</p>
+        <img
+          :src="item.screenshotBase64"
+          alt="上傳圖片"
+          class="max-w-full rounded border border-gray-300"
+        />
       </div>
-      <button @click="deleteFeedback(item.id)" class="delete-btn">
-        <i class="fi fi-rr-trash"></i>
+
+      <button
+        @click="deleteFeedback(item.id)"
+        class="mt-4 bg-red-600 text-white px-4 py-2 rounded hover:bg-red-700 transition"
+      >
+        刪除
       </button>
 
-      <hr />
+      <hr class="mt-6 border-t border-gray-300" />
     </div>
   </div>
 </template>
@@ -80,51 +91,3 @@ async function deleteFeedback(id: string) {
 
 onMounted(fetchFeedbacks)
 </script>
-
-<style scoped lang="scss">
-.feedback-review {
-  max-width: 800px;
-  margin: auto;
-  padding: 2rem;
-
-  h1 {
-    text-align: center;
-    margin-bottom: 2rem;
-  }
-
-  .feedback-item {
-    margin-bottom: 2rem;
-    background: #f9f9f9;
-    padding: 1rem;
-    border-radius: 8px;
-    border: 1px solid #ddd;
-    .delete-btn {
-      background-color: #e3342f;
-      color: white;
-      border: none;
-      border-radius: 6px;
-      padding: 0.5rem 1rem;
-      cursor: pointer;
-      font-size: 0.95rem;
-      margin-top: 1rem;
-
-      &:hover {
-        background-color: #cc1f1a;
-      }
-    }
-  }
-
-  .preview-img {
-    max-width: 100%;
-    margin-top: 0.5rem;
-    border-radius: 6px;
-    border: 1px solid #ccc;
-  }
-
-  hr {
-    margin-top: 1.5rem;
-    border: none;
-    border-top: 1px solid #ccc;
-  }
-}
-</style>
