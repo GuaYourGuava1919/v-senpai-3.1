@@ -205,10 +205,3 @@ def get_openai_response(token: str, user_input: str, history: object) -> str:
 
     print("機器人回應", response.choices[0].message.content)
     return response.choices[0].message.content , context_text
-
-
-
-if __name__ == "__main__":
-    user_input = "關於林芯緹有沒有什麼資料呢？"
-    response = get_openai_response("", user_input, [])
-    print(f"回應: {response}")

@@ -45,6 +45,7 @@ import { collection, getDocs, Timestamp, deleteDoc, doc, orderBy, query } from '
 
 interface Feedback {
   id: string
+  uid: string // ← 加上這個
   name: string
   favoritePart: string
   suggestion: string
