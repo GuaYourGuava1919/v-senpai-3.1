@@ -21,10 +21,11 @@
             <!-- 主控按鈕 -->
             <button
               class="text-xs text-indigo-800 bg-indigo-300 hover:bg-indigo-200 transition rounded-full px-3 py-1 shadow-sm"
-              @click=""
+              @click="showMetadataDialog = true"
             >
               原文
             </button>
+
             <button
               class="text-xs text-indigo-600 bg-indigo-100 hover:bg-indigo-200 transition rounded-full px-3 py-1 shadow-sm"
               @click="showFeedback = !showFeedback"
@@ -54,6 +55,31 @@
       </div>
     </div>
   </div>
+  <!-- Metadata Dialog -->
+  <!-- Dialog 背景區 -->
+  <div
+    v-if="showMetadataDialog"
+    class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+    @click.self="showMetadataDialog = false"
+  >
+    <div
+      class="bg-white rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] p-6 animate-fade-in overflow-y-auto"
+    >
+      <h2 class="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">原始內容</h2>
+      <pre class="text-sm text-gray-700 whitespace-pre-wrap break-words font-mono leading-relaxed"
+        >{{ props.metadata || '（無原文說明）' }}
+    </pre
+      >
+      <div class="text-right mt-4">
+        <button
+          class="text-sm text-indigo-600 hover:underline hover:text-indigo-800"
+          @click="showMetadataDialog = false"
+        >
+          關閉
+        </button>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
@@ -63,6 +89,7 @@ const props = defineProps<{
   text: string
   isSelf?: boolean
   timestamp?: string
+  metadata?: string
 }>()
 
 const emit = defineEmits<{
@@ -71,6 +98,7 @@ const emit = defineEmits<{
 
 const showFeedback = ref(false)
 const feedbackGiven = ref(false)
+const showMetadataDialog = ref(false)
 
 function sendFeedback(type: 'up' | 'down') {
   emit('feedback', { type, text: props.text })

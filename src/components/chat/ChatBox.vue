@@ -6,6 +6,7 @@
       :text="msg.text || '[沒有文字]'"
       :isSelf="msg.sender === 'user'"
       :timestamp="msg.createdAt"
+      :metadata="msg.metadata"
     />
   </div>
 </template>
@@ -16,21 +17,32 @@ import { getAuth, onAuthStateChanged } from 'firebase/auth'
 import { useChatHistory } from '@/composables/useChatHistory'
 import ChatBubble from '@/components/chat/ChatBubble.vue'
 
-const { messages, loadChatHistory } = useChatHistory()
-const auth = getAuth()
+// const { messages, loadChatHistory } = useChatHistory()
+// const auth = getAuth()
 
-onMounted(() => {
-  onAuthStateChanged(auth, async (user) => {
-    if (user?.uid) {
-      console.log('載入聊天記錄:', user.uid)
-      await loadChatHistory(user.uid)
-      console.log('訊息數量:', messages.value.length)
-      console.log('訊息內容:', messages.value)
-    } else {
-      console.warn('尚未登入，無法載入聊天紀錄')
-    }
-  })
-})
+defineProps<{
+  messages: {
+    sender: string
+    text: string
+    createdAt: string
+    metadata?: string
+    docid?: string
+    feedback?: string
+  }[]
+}>()
+
+// onMounted(() => {
+//   onAuthStateChanged(auth, async (user) => {
+//     if (user?.uid) {
+//       console.log('載入聊天記錄:', user.uid)
+//       await loadChatHistory(user.uid)
+//       console.log('訊息數量:', messages.value.length)
+//       console.log('訊息內容:', messages.value)
+//     } else {
+//       console.warn('尚未登入，無法載入聊天紀錄')
+//     }
+//   })
+// })
 </script>
 
 <style scoped></style>
