@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-xl mx-auto px-4 py-8 text-gray-800">
-    <h2 class="text-2xl font-bold mb-6">👤 資料設定</h2>
+    <h2 class="text-2xl font-bold mb-6"><i class="fi fi-rr-user"></i>資料設定</h2>
 
     <div class="space-y-6">
       <!-- 使用者名稱 -->
@@ -70,13 +70,13 @@
         <div class="flex flex-col sm:flex-row gap-4">
           <router-link
             to="/feedback-review"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-center"
+            class="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition text-center"
           >
             回饋查看
           </router-link>
           <router-link
             to="/signup-list"
-            class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition text-center"
+            class="px-4 py-2 bg-primary-600 text-white rounded hover:bg-primary-700 transition text-center"
           >
             受測者管理
           </router-link>
@@ -89,7 +89,7 @@
           @click="saveSettings"
           class="w-full sm:w-auto px-6 py-2 bg-green-500 text-white rounded hover:bg-green-600 transition"
         >
-          💾 儲存變更
+          儲存變更
         </button>
         <p v-if="saved" class="text-green-600 mt-3 text-sm">✅ 已儲存</p>
       </div>

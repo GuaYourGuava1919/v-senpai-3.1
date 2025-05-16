@@ -5,8 +5,8 @@
         class="max-w-md px-4 py-2 rounded-2xl shadow-md whitespace-pre-wrap break-words"
         :class="
           isSelf
-            ? 'bg-indigo-500 text-white rounded-br-none'
-            : 'bg-gray-200 text-gray-800 rounded-bl-none'
+            ? 'bg-primary-500 text-white rounded-br-none'
+            : 'bg-primary-100 text-primary-800 rounded-bl-none'
         "
       >
         {{ text }}
@@ -20,32 +20,33 @@
           <div class="flex gap-3">
             <!-- 主控按鈕 -->
             <button
-              class="text-xs text-indigo-800 bg-indigo-300 hover:bg-indigo-200 transition rounded-full px-3 py-1 shadow-sm"
+              class="text-xs text-primary-800 bg-primary-200 hover:bg-primary-100 transition rounded-full px-3 py-1 shadow-sm"
               @click="showMetadataDialog = true"
             >
               原文
             </button>
 
             <button
-              class="text-xs text-indigo-600 bg-indigo-100 hover:bg-indigo-200 transition rounded-full px-3 py-1 shadow-sm"
+              class="text-xs text-primary-600 bg-primary-100 hover:bg-primary-200 transition rounded-full px-3 py-1 shadow-sm"
               @click="showFeedback = !showFeedback"
             >
               {{ showFeedback ? '收合回饋' : '給予回饋' }}
             </button>
           </div>
+
           <!-- 展開回饋 -->
           <div v-if="showFeedback" class="mt-2 flex gap-3 animate-fade-in">
             <button
-              class="bg-white border border-indigo-200 hover:border-indigo-400 text-indigo-600 px-3 py-1 rounded-full shadow-sm hover:shadow transition"
+              class="bg-white border border-green-200 hover:border-green-400 text-green-600 px-3 py-1 rounded-full shadow-sm hover:shadow transition"
               @click="sendFeedback('up')"
             >
-              👍 喜歡
+              <i class="fi fi-rr-social-network"></i>
             </button>
             <button
               class="bg-white border border-red-200 hover:border-red-400 text-red-500 px-3 py-1 rounded-full shadow-sm hover:shadow transition"
               @click="sendFeedback('down')"
             >
-              👎 不喜歡
+              <i class="fi fi-rr-hand"></i>
             </button>
           </div>
         </div>
@@ -55,8 +56,8 @@
       </div>
     </div>
   </div>
+
   <!-- Metadata Dialog -->
-  <!-- Dialog 背景區 -->
   <div
     v-if="showMetadataDialog"
     class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
@@ -65,14 +66,14 @@
     <div
       class="bg-white rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] p-6 animate-fade-in overflow-y-auto"
     >
-      <h2 class="text-lg font-semibold mb-3 text-gray-800 border-b pb-2">原始內容</h2>
-      <pre class="text-sm text-gray-700 whitespace-pre-wrap break-words font-mono leading-relaxed"
+      <h2 class="text-lg font-semibold mb-3 text-primary-800 border-b pb-2">原始內容</h2>
+      <pre
+        class="text-sm text-primary-700 whitespace-pre-wrap break-words font-mono leading-relaxed"
         >{{ props.metadata || '（無原文說明）' }}
-    </pre
-      >
+      </pre>
       <div class="text-right mt-4">
         <button
-          class="text-sm text-indigo-600 hover:underline hover:text-indigo-800"
+          class="text-sm text-primary-600 hover:underline hover:text-primary-800"
           @click="showMetadataDialog = false"
         >
           關閉

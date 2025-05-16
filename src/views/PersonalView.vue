@@ -1,5 +1,5 @@
 <template>
-  <div class="pt-25">
+  <div class="mt-[150px]">
     <!-- 個人資料修改 -->
     <UserProfileSettings />
     <hr class="divider" />

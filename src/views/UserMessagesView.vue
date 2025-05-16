@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl mx-auto pt-25 py-10">
+  <div class="max-w-3xl mx-auto mt-[150px] py-10">
     <h1 class="text-2xl font-bold mb-6">🗂️ 使用者對話紀錄</h1>
     <p class="text-gray-500 mb-4">UID：{{ uid }}</p>
     <p class="text-gray-500 mb-4">使用者名稱：{{ name || '未知' }}</p>

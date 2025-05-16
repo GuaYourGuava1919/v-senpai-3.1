@@ -1,23 +1,27 @@
 <template>
-  <header class="bg-white shadow-md fixed top-0 left-0 w-full z-50">
+  <header class="bg-primary-100 shadow-md fixed top-0 left-0 w-full z-50">
     <div
-      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between w-full"
+      class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-24 flex items-center justify-between w-full"
     >
       <!-- 左邊：Logo -->
-      <router-link to="/" class="text-2xl font-bold text-indigo-600"> V-Senpai </router-link>
+      <router-link to="/" class="">
+        <img src="/logo.png" alt="V-Senpai Logo" class="h-[70px] object-contain" />
+      </router-link>
 
       <!-- 桌面版導覽列 -->
       <nav class="hidden md:flex space-x-6 items-center">
-        <router-link to="/chat" class="text-gray-700 hover:text-indigo-600">聊天室</router-link>
-        <router-link to="/personal" class="text-gray-700 hover:text-indigo-600"
+        <router-link v-if="user" to="/chat" class="text-gray-700 hover:text-primary-600"
+          >聊天室</router-link
+        >
+        <router-link v-if="user" to="/personal" class="text-gray-700 hover:text-primary-600"
           >個人設置</router-link
         >
-        <router-link to="/feedback" class="text-gray-700 hover:text-indigo-600"
+        <router-link v-if="user" to="/feedback" class="text-gray-700 hover:text-primary-600"
           >意見回饋</router-link
         >
         <!-- 登入按鈕 -->
         <button
-          class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+          class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
           @click="handleAuth"
         >
           {{ user ? '登出' : 'GitHub 登入' }}
@@ -40,17 +44,17 @@
     <!-- 手機版下拉選單 -->
     <transition name="slide-fade">
       <nav v-if="isOpen" class="flex flex-col md:hidden px-4 pt-2 pb-4 bg-white shadow-md border-t">
-        <router-link to="/chat" class="py-2 text-gray-700 hover:text-indigo-600"
+        <router-link to="/chat" class="py-2 text-gray-700 hover:text-primary-600"
           >聊天室</router-link
         >
-        <router-link to="/personal" class="py-2 text-gray-700 hover:text-indigo-600"
+        <router-link to="/personal" class="py-2 text-gray-700 hover:text-primary-600"
           >個人設置</router-link
         >
-        <router-link to="/feedback" class="py-2 text-gray-700 hover:text-indigo-600"
+        <router-link to="/feedback" class="py-2 text-gray-700 hover:text-primary-600"
           >意見回饋</router-link
         >
         <button
-          class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
+          class="px-4 py-2 bg-primary-600 text-white rounded-md hover:bg-primary-700 transition"
           @click="handleAuth"
         >
           {{ user ? '登出' : 'GitHub 登入' }}

@@ -2,13 +2,15 @@ import { ref, onMounted } from 'vue'
 import { auth, db } from '../config/firebaseConfig'
 import { signInWithPopup, GithubAuthProvider, onAuthStateChanged, signOut } from 'firebase/auth'
 import { doc, getDoc, setDoc, updateDoc } from 'firebase/firestore'
-
 import type { User } from 'firebase/auth'
+import { useRouter } from 'vue-router'
 
 const user = ref<User | null>(null)
 const provider = new GithubAuthProvider()
 
 export function useAuth() {
+  const router = useRouter()
+
   const signInWithGitHub = async () => {
     const result = await signInWithPopup(auth, provider)
     const credential = GithubAuthProvider.credentialFromResult(result)
@@ -37,6 +39,7 @@ export function useAuth() {
   const logout = async () => {
     await signOut(auth)
     user.value = null
+    router.push('/')
   }
 
   onMounted(() => {

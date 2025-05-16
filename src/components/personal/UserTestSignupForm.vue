@@ -1,6 +1,8 @@
 <template>
   <div class="max-w-xl mx-auto px-4 py-8 text-gray-800">
-    <h2 class="text-2xl font-bold mb-2">🧪 參與使用者受測計畫</h2>
+    <h2 class="text-2xl font-bold mb-2">
+      <i class="fi fi-rs-blood-test-tube-alt"></i> 參與使用者受測計畫
+    </h2>
     <p class="mb-6 text-gray-600">誠摯邀請你協助我們優化 V-Senpai 系統。</p>
 
     <form v-if="user && !user.hasSignedUp" class="space-y-6">

@@ -14,8 +14,18 @@ const router = createRouter({
       component: () => import('../views/ChatView.vue'),
       meta: { requiresAuth: true },
     },
-    { path: '/feedback', name: 'feedback', component: () => import('../views/FeedbackView.vue') },
-    { path: '/personal', name: 'personal', component: () => import('../views/PersonalView.vue') },
+    {
+      path: '/feedback',
+      name: 'feedback',
+      component: () => import('../views/FeedbackView.vue'),
+      meta: { requiresAuth: true },
+    },
+    {
+      path: '/personal',
+      name: 'personal',
+      component: () => import('../views/PersonalView.vue'),
+      meta: { requiresAuth: true },
+    },
     {
       path: '/feedback-review',
       component: () => import('@/views/FeedbackReviewView.vue'),
