@@ -31,9 +31,11 @@ export function useChatService(
 
     try {
       const history = await fetchChatHistory(uid)
-      const response = await fetch(`/api/test`, {
-        // local
-        // const response = await fetch(`http://localhost:5000/api/test`, {
+      // const response = await fetch(`/api/test`, {
+      // local
+      const response = await fetch(`http://localhost:5000/api/test`, {
+        // dev
+        // const response = await fetch(`http://192.168.50.199:5000/api/test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -41,6 +43,7 @@ export function useChatService(
           history,
           accessToken: accessToken.value,
         }),
+        mode: 'cors', // 確保支援跨域
       })
 
       if (!response.ok) throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`)

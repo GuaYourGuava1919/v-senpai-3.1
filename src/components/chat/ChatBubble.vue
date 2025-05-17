@@ -60,11 +60,11 @@
   <!-- Metadata Dialog -->
   <div
     v-if="showMetadataDialog"
-    class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50"
+    class="fixed inset-0 bg-black/30 backdrop-blur-sm flex items-center justify-center z-50 p-5"
     @click.self="showMetadataDialog = false"
   >
     <div
-      class="bg-white rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] p-6 animate-fade-in overflow-y-auto"
+      class="bg-white rounded-lg shadow-xl max-w-xl w-full max-h-[80vh] p-6 animate-fade-in overflow-y-scroll"
     >
       <h2 class="text-lg font-semibold mb-3 text-primary-800 border-b pb-2">原始內容</h2>
       <pre
@@ -73,7 +73,7 @@
       </pre>
       <div class="text-right mt-4">
         <button
-          class="text-sm text-primary-600 hover:underline hover:text-primary-800"
+          class="px-4 py-2 text-sm font-medium text-white bg-red-500 rounded-md shadow hover:bg-red-600 transition"
           @click="showMetadataDialog = false"
         >
           關閉

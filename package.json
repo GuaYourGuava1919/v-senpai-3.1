@@ -4,8 +4,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "start": "concurrently \"vite\" \".venv\\Scripts\\python api\\app.py\"",
+    "dev": "vite --host",
+    "start": "concurrently \"vite --host\" \".venv\\Scripts\\python api\\app.py\"",
     "build": "run-p type-check \"build-only {@}\" --",
     "preview": "vite preview",
     "build-only": "vite build",

@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="">
     <footer class="bg-primary-100 border-t py-4 w-full text-center text-sm text-gray-600">
       <div class="max-w-5xl mx-auto px-4 text-center space-y-2">
         <p class="text-sm text-gray-600">&copy; 2025 GuaYourGuava. All rights reserved.</p>
@@ -32,33 +32,42 @@
     <!-- Modal -->
     <div
       v-if="showTerms || showPolicy"
-      class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50"
+      class="fixed inset-0 bg-black/40 backdrop-blur-sm flex items-center justify-center z-50 p-5"
     >
       <div
-        class="bg-white rounded-2xl shadow-2xl w-full max-w-3xl max-h-[85vh] overflow-y-auto p-6 sm:p-8 relative animate-popup"
+        class="bg-white w-full h-[90vh] max-w-3xl sm:rounded-2xl shadow-2xl overflow-hidden flex flex-col animate-popup"
       >
-        <!-- 關閉按鈕 -->
-        <button
-          class="absolute top-4 right-4 text-2xl font-bold text-gray-400 hover:text-green-500 transition"
-          @click="closeModal"
-          aria-label="關閉"
+        <!-- Sticky Header -->
+        <div
+          class="sticky top-0 z-10 bg-white px-4 sm:px-8 pt-4 pb-2 border-b flex justify-between items-center"
         >
-          &times;
-        </button>
+          <h2 class="text-lg font-semibold text-primary-800">
+            📜 {{ showTerms ? '使用條款' : '隱私權政策' }}
+          </h2>
+          <button
+            class="p-2 text-2xl font-bold text-gray-400 hover:text-green-500 transition"
+            @click="closeModal"
+            aria-label="關閉"
+          >
+            &times;
+          </button>
+        </div>
 
         <!-- 條款內容 -->
         <div
-          class="prose prose-sm sm:prose-base max-w-none text-gray-700 leading-relaxed"
+          class="flex-1 overflow-y-auto px-4 sm:px-8 py-4 prose prose-sm sm:prose-base max-w-none text-gray-700 leading-relaxed"
           v-html="showTerms ? termsHtml : policyHtml"
         />
 
-        <!-- 同意按鈕 -->
-        <button
-          class="mt-6 w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 rounded-lg shadow transition"
-          @click="closeModal"
-        >
-          ✅ 我已閱讀並同意
-        </button>
+        <!-- Sticky Footer 按鈕 -->
+        <div class="sticky bottom-0 z-10 bg-white px-4 sm:px-8 pb-6 pt-4 border-t">
+          <button
+            class="w-full bg-green-500 hover:bg-green-600 text-white font-medium py-3 text-base sm:text-lg rounded-lg shadow transition"
+            @click="closeModal"
+          >
+            ✅ 我已閱讀並同意
+          </button>
+        </div>
       </div>
     </div>
   </div>

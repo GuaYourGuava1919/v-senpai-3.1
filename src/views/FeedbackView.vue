@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-3xl mx-auto mt-[150px] py-10 bg-white text-gray-800">
+  <div class="max-w-3xl mx-auto mt-[60px] bg-white text-gray-800 sm:max-w-4xl py-10 px-8">
     <h1 class="text-3xl font-bold mb-6 text-center">📝 V-Senpai 使用回饋調查</h1>
     <p class="mb-6 text-center leading-relaxed">
       感謝你使用 V-Senpai！我們希望透過這份問卷了解你的使用體驗，並持續改進我們的服務。
@@ -14,10 +14,10 @@
 
     <div class="flex justify-center mt-6">
       <button
-        class="bg-indigo-600 text-white px-6 py-2 rounded-lg hover:bg-indigo-700 transition"
+        class="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
         @click="handleSubmit"
       >
-        ✅ 提交回饋
+        提交回饋
       </button>
     </div>
 

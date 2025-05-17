@@ -6,14 +6,14 @@ from google.genai import types
 import json
 
 # deploy開
-from api.vector_search import (
-    vector_search_light,
-)
-
-#local開
-# from vector_search import (
+# from api.vector_search import (
 #     vector_search_light,
 # )
+
+#local開
+from vector_search import (
+    vector_search_light,
+)
 
 # 環境變數設定
 GROQ_MODEL = "llama-3.3-70b-versatile"

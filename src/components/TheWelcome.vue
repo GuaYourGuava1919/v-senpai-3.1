@@ -1,6 +1,6 @@
 <template>
   <div
-    class="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#fdfefe] to-[#f5f7fa] pt-20 sm:px-6 py-10 text-gray-800"
+    class="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#fdfefe] to-[#f5f7fa] sm:px-6 py-10 text-gray-800"
   >
     <div class="text-center w-full max-w-xl p-10">
       <h1 class="text-3xl sm:text-4xl font-extrabold mb-4 leading-snug">
@@ -21,22 +21,6 @@
       </p>
 
       <ImageCarousel class="mb-6" />
-
-      <div class="flex flex-col sm:flex-row justify-center items-center gap-4">
-        <router-link
-          to="/personal"
-          class="px-6 py-3 w-full sm:w-auto bg-green-500 text-white rounded-full font-semibold hover:bg-green-600 transition shadow-md text-center"
-        >
-          🚀 開始使用
-        </router-link>
-
-        <button
-          @click="goToDocs"
-          class="px-6 py-3 w-full sm:w-auto bg-gray-600 text-white rounded-full font-semibold hover:bg-gray-700 transition shadow-md"
-        >
-          📘 查看說明
-        </button>
-      </div>
     </div>
   </div>
 </template>
