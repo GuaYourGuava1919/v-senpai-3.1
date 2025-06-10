@@ -22,7 +22,7 @@ def home():
 @app.route('/api/test', methods=['POST'])
 def test():
     data = request.get_json()
-    print(f"收到的資料: {data}")
+    # print(f"收到的資料: {data}")
     
     user_input = data.get("message", "")
     access_token = data.get("accessToken")

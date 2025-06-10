@@ -4,6 +4,7 @@ from openai import OpenAI
 from google import genai
 from google.genai import types
 import json
+from typing import List, Dict
 
 # deploy開
 # from api.vector_search import (
@@ -20,6 +21,10 @@ GROQ_MODEL = "llama-3.3-70b-versatile"
 GROQ_MODEL_AGENT = "llama-3.3-70b-versatile"
 GROQ_API_KEY = os.environ.get("GROQ_API_KEY")
 groq_client = Groq(api_key=GROQ_API_KEY)
+
+# token = os.environ["GITHUB_TOKEN"]
+endpoint = "https://models.inference.ai.azure.com"
+model_name = "gpt-4o-mini"
 
 
 def format_history_for_prompt(history: list) -> str:
@@ -142,9 +147,6 @@ def get_groq_response(user_input: str, user_history: list) -> str:
     except Exception as e:
         raise RuntimeError(f"Error from Groq API: {str(e)}")
 
-# token = os.environ["GITHUB_TOKEN"]
-endpoint = "https://models.inference.ai.azure.com"
-model_name = "gpt-4o-mini"
 
 def format_context(matches: list[dict]) -> str:
     blocks = []
@@ -159,20 +161,36 @@ def format_context(matches: list[dict]) -> str:
 
     return "\n\n".join(blocks)
 
-def format_history_for_chat(history):
+
+def format_history_for_chat(history: List[Dict[str, str]]) -> List[Dict[str, str]]:
     messages = []
     for pair in history:
-        messages.append({"role": "user", "content": pair["user"]})
-        messages.append({"role": "assistant", "content": pair["ai"]})
+        user_msg = pair.get("user")
+        ai_msg = pair.get("ai")
+
+        if user_msg:
+            messages.append({"role": "user", "content": user_msg})
+        if ai_msg:
+            messages.append({"role": "assistant", "content": ai_msg})  # 注意這裡應該是 "assistant"
     return messages
 
 
 V_SENPAI_SYSTEM_PROMPT = """
-你是學長姊模擬機器人 V-Senpai，一位說中文的課堂助理，根據訪談資料，協助學生了解「系統分析與設計」課程與專題實作之間的差異與經驗。
-像是在與學弟妹聊天一樣，回答長度請控制在 3～5 句之間。
-回應時請使用『某某學長姐表示⋯⋯』、『根據誰誰誰的訪談紀錄⋯⋯』這類說法，請勿假裝自己就是受訪者本人。
-你的回答只能根據 context_text 中的資料內容，不可以自行想像或補充資料，若資料不足，也請坦率說明。
+你是「V-Senpai」，一位具備豐富經驗的學長姊模擬機器人。你的任務是協助學生了解輔仁大學資管系「系統分析與設計」課程（又稱 SA、小專題）與「專題實作」之間的差異與歷屆經驗。
+你會根據歷屆學生的訪談紀錄與課程背景知識，扮演一位中文課堂助教，幫助學生釐清困惑、提供建議與經驗分享。
+請嚴格遵守以下規則：
+1. **資料為本，禁止猜測或捏造資訊。**  
+   - 回答只能根據資料中出現的內容（例如：訪談、課程規劃等）。  
+   - 若找不到答案，請說：「我找不到相關資料」，並鼓勵學生改問其他角度。  
+2. **問題模糊時，協助釐清再回答。**  
+   - 若學生問題不清楚，請主動列出選項或追問，協助對方聚焦。  
+3. **回答方式要具體、真誠、有條理。**  
+   - 舉例時請指出是來自「某位同學的經驗」。  
+   - 不要使用過於空泛的建議，例如「多努力」、「加油就好」這類無實質幫助的回答。  
+4. **以中文作答。**  
+   - 回答要口語、自然、簡潔明確。
 """
+
 
 def get_openai_response(token: str, user_input: str, history: object) -> str:
     client = OpenAI(
@@ -181,19 +199,13 @@ def get_openai_response(token: str, user_input: str, history: object) -> str:
     )
 
     search_result = vector_search_light(user_input)
-    print("🔍 查詢結果如下：\n")
-    print(search_result["text"])
-    
-    # context_text = format_context(search_result.get("matches", [])) 
+
     context_text = search_result.get("text", "查無資料。")
-    
-    # print("向量查詢結果內容", context_text)
-    
+
     messages = [
-    {"role": "system", "content": V_SENPAI_SYSTEM_PROMPT},
-    # *format_history_for_chat(history),  # 👈 將歷史對話插入
-    {"role": "user", "content": user_input},
-    {"role": "assistant", "content": context_text}
+        {"role": "system", "content": V_SENPAI_SYSTEM_PROMPT + f"\n\n以下是你可以參考的資料：\n{context_text}"},
+        *format_history_for_chat(history),
+        {"role": "user", "content": user_input}
     ]
 
     response = client.chat.completions.create(
@@ -203,5 +215,6 @@ def get_openai_response(token: str, user_input: str, history: object) -> str:
         top_p=1.0
     )
 
-    print("機器人回應", response.choices[0].message.content)
-    return response.choices[0].message.content , context_text
+    # print("AAA機器人收到的資料",messages)
+    print("AAA機器人回應", response.choices[0].message.content)
+    return response.choices[0].message.content, context_text

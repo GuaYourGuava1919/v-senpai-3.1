@@ -51,7 +51,7 @@ export function useChatHistory() {
 
   const loadChatHistory = async (uid: string) => {
     try {
-      const ref = collection(db, `/users/${uid}/conversation-1`)
+      const ref = collection(db, `/users/${uid}/conversation-0610`)
       const q = query(ref)
       const querySnapshot = await getDocs(q)
 
@@ -91,7 +91,6 @@ export function useChatHistory() {
       })
 
       messages.value = [defaultGreetingMessage, ...chatHistory]
-      // console.log('✅ Chat history loaded:', messages.value)
     } catch (error) {
       console.error('❌ Failed to load chat history:', error)
       errorMessage.value = '無法載入聊天記錄'

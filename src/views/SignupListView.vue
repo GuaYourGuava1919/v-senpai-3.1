@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-5xl mx-auto mt-[150px] y-10 text-gray-800">
+  <div class="max-w-5xl mx-auto mt-[150px] mb-10 y-10 text-gray-800">
     <h1 class="text-3xl font-bold text-center mb-4">🧪 使用者報名資料列表</h1>
     <p class="text-center text-gray-500 mb-6">目前共有 {{ signups.length }} 位報名者</p>
 

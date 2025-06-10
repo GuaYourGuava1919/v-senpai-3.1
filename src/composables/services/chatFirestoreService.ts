@@ -9,6 +9,7 @@ import {
   query,
   serverTimestamp,
   addDoc,
+  updateDoc,
 } from 'firebase/firestore'
 import { db } from '@/config/firebaseConfig'
 import type { ChatPair, ChatMessage } from './types'
@@ -16,7 +17,7 @@ import type { Ref } from 'vue'
 
 export const saveConversationToFirestore = async (uid: string, pairs: ChatPair[]) => {
   try {
-    await addDoc(collection(db, `/users/${uid}/conversation-1`), {
+    await addDoc(collection(db, `/users/${uid}/conversation-0610`), {
       messagePairs: pairs,
       createdAt: serverTimestamp(),
     })
@@ -40,6 +41,8 @@ export const fetchChatHistoryFromFirestore = async (uid: string): Promise<ChatPa
         })
       }
     }
+    console.log('✅ Firestore 讀取成功:', pairs)
+
     return pairs
   } catch (e) {
     console.error('❌ Firestore 讀取失敗:', e)
@@ -52,7 +55,7 @@ export const watchFirestoreMessages = (
   messages: Ref<ChatMessage[]>,
   defaultMessage: ChatMessage,
 ) => {
-  const convoRef = collection(db, `/users/${uid}/conversation-1`)
+  const convoRef = collection(db, `/users/${uid}/conversation-0610`)
   const q = query(convoRef, orderBy('createdAt'))
 
   onSnapshot(q, (snapshot) => {
@@ -86,6 +89,22 @@ export const watchFirestoreMessages = (
     })
 
     if (messages.value.length === 0) messages.value.push(defaultMessage)
-    messages.value.push(...loadedMessages)
+    // messages.value.push(...loadedMessages)
+    messages.value = [defaultMessage, ...loadedMessages]
+  })
+  console.log(messages.value)
+}
+
+export async function updateMessageFeedback(
+  userId: string,
+  convoId: string,
+  messageId: string,
+  type: 'like' | 'dislike',
+): Promise<void> {
+  const messageRef = doc(db, `users/${userId}/conversation-${convoId}/${messageId}`)
+
+  await updateDoc(messageRef, {
+    feedback: type,
+    feedbackAt: serverTimestamp(),
   })
 }

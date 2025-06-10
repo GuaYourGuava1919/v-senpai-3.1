@@ -12,7 +12,7 @@ load_dotenv()
 
 # 初始化 Pinecone
 pc = Pinecone(api_key=os.environ.get("PINECONE_API_KEY"))
-index_name = "0509-data"
+index_name = "vec-0601"
 index = pc.Index(index_name)
 
 # 初始化 Cohere
@@ -34,14 +34,13 @@ def vector_search_light(user_input: str) -> dict:
         results = index.query(
             # namespace="interview-rag",
             vector=vector,
-            top_k=10,
+            top_k=5,
             include_values=False,
             include_metadata=True,
         )
 
         matches = results.get("matches", [])
 
-        # name = match['metadata']['interviewee'].replace(",", "、")
 
         # 補一個合併所有文字的欄位（給 Prompt 用）
         formatted = "\n\n---\n\n".join(
@@ -49,10 +48,8 @@ def vector_search_light(user_input: str) -> dict:
             for match in matches
         )
 
-        
-        # print(f"🔍 向量查詢結果: {matches}")
-        # print(f"🔍 向量查詢結果文字: {formatted}")
         print(f"🔍 向量查詢結果數量: {len(matches)}")
+        # print(f"🔍 向量查詢結果內容: {formatted[:200]}...")  # 只顯示前200個字
 
         return {
             "matches": matches,
@@ -71,4 +68,4 @@ def vector_search_light(user_input: str) -> dict:
 
 
 if __name__ == "__main__":
-    vector_search_light("分組壓力很大怎麼辦")
+    vector_search_light("我們最後專題要用英文報告嗎？")

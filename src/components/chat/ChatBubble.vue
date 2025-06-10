@@ -38,13 +38,13 @@
           <div v-if="showFeedback" class="mt-2 flex gap-3 animate-fade-in">
             <button
               class="bg-white border border-green-200 hover:border-green-400 text-green-600 px-3 py-1 rounded-full shadow-sm hover:shadow transition"
-              @click="sendFeedback('up')"
+              @click="sendFeedback('like')"
             >
               <i class="fi fi-rr-social-network"></i>
             </button>
             <button
               class="bg-white border border-red-200 hover:border-red-400 text-red-500 px-3 py-1 rounded-full shadow-sm hover:shadow transition"
-              @click="sendFeedback('down')"
+              @click="sendFeedback('dislike')"
             >
               <i class="fi fi-rr-hand"></i>
             </button>
@@ -52,7 +52,8 @@
         </div>
 
         <!-- 感謝訊息 -->
-        <div v-else class="text-xs text-green-600 mt-2">✅ 已收到你的回饋，感謝！</div>
+        <!-- <div v-else class="text-xs text-green-600 mt-2">✅ 已收到你的回饋，感謝！</div> -->
+        <div v-if="feedbackGiven">✅ 已收到你的回饋，感謝！</div>
       </div>
     </div>
   </div>
@@ -84,27 +85,33 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { useFeedback } from '@/composables/useFeedback'
+import { getAuth } from 'firebase/auth'
+import { computed } from 'vue'
+import { defineProps } from 'vue'
+import MarkdownIt from 'markdown-it'
+
+const md = new MarkdownIt()
 
 const props = defineProps<{
   text: string
   isSelf?: boolean
   timestamp?: string
   metadata?: string
+  docid?: string
 }>()
 
-const emit = defineEmits<{
-  (e: 'feedback', payload: { type: 'up' | 'down'; text: string }): void
-}>()
+const renderedText = computed(() => md.render(props.text || ''))
 
-const showFeedback = ref(false)
-const feedbackGiven = ref(false)
-const showMetadataDialog = ref(false)
+const { showFeedback, feedbackGiven, showMetadataDialog, toggleFeedback, giveFeedback } =
+  useFeedback()
 
-function sendFeedback(type: 'up' | 'down') {
-  emit('feedback', { type, text: props.text })
-  feedbackGiven.value = true
-  showFeedback.value = false
+const userId = getAuth().currentUser?.uid || '' // 確保已登入
+
+function sendFeedback(type: 'like' | 'dislike') {
+  if (!props.docid || !userId) return
+  giveFeedback(userId, '1', props.docid, type)
+  alert(type === 'like' ? '感謝你的讚！我們會持續努力！' : '感謝你的回饋，我們會努力改進！')
 }
 </script>
 

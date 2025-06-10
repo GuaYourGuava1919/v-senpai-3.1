@@ -2,7 +2,7 @@
 import { ref, type Ref } from 'vue'
 import { auth } from '@/config/firebaseConfig'
 import type { ChatMessage, ChatPair } from './services/types'
-import { fetchChatHistory, saveChatHistoryToRTDB } from './services/chatHistoryService'
+import { fetchChatHistory } from './services/chatHistoryService'
 import { saveConversationToFirestore } from './services/chatFirestoreService'
 import { readUserAccessToken } from './services/userService'
 
@@ -20,9 +20,9 @@ export function useChatService(
   }
 
   const sendMessage = async () => {
-    const userText = input.value.trim()
+    const userText = input.value.trim() // 去除前後空白
     const uid = auth.currentUser?.uid
-    if (!userText || !accessToken.value || !uid) return
+    if (!userText || !accessToken.value || !uid) return // 確保有輸入、token和uid
 
     const timestamp = new Date().toISOString()
     messages.value.push({ sender: 'user', text: userText, createdAt: timestamp })
@@ -31,16 +31,18 @@ export function useChatService(
 
     try {
       const history = await fetchChatHistory(uid)
+      if (!history || history.length === 0) {
+        console.warn('⚠️ 沒有找到歷史對話，將使用空陣列')
+      }
+      // deploy時請改成以下
       // const response = await fetch(`/api/test`, {
       // local
       const response = await fetch(`http://localhost:5000/api/test`, {
-        // dev
-        // const response = await fetch(`http://192.168.50.199:5000/api/test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message: userText,
-          history,
+          history: history,
           accessToken: accessToken.value,
         }),
         mode: 'cors', // 確保支援跨域
@@ -60,7 +62,7 @@ export function useChatService(
 
       messagePairs.value.push({ user: userText, ai: aiText, metadata })
       await saveConversationToFirestore(uid, messagePairs.value)
-      await saveChatHistoryToRTDB(uid, [...history, ...messagePairs.value])
+      // await saveChatHistoryToRTDB(uid, [...history, ...messagePairs.value])
       messagePairs.value = []
     } catch (err: any) {
       console.error('❌API打失敗:', err)
