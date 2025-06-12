@@ -49,21 +49,6 @@ export function useChatService(
       })
 
       if (!response.ok) throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`)
-
-      const data = await response.json()
-      const aiText = data.reply[0]
-      const metadata = data.reply[1]
-
-      messages.value[messages.value.length - 1] = {
-        sender: 'ai',
-        text: aiText,
-        createdAt: new Date().toISOString(),
-      }
-
-      messagePairs.value.push({ user: userText, ai: aiText, metadata })
-      await saveConversationToFirestore(uid, messagePairs.value)
-      // await saveChatHistoryToRTDB(uid, [...history, ...messagePairs.value])
-      messagePairs.value = []
     } catch (err: any) {
       console.error('❌API打失敗:', err)
       messages.value[messages.value.length - 1] = {
