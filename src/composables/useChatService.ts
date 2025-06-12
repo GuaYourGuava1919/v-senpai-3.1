@@ -20,9 +20,9 @@ export function useChatService(
   }
 
   const sendMessage = async () => {
-    const userText = input.value.trim() // 去除前後空白
+    const userText = input.value.trim()
     const uid = auth.currentUser?.uid
-    if (!userText || !accessToken.value || !uid) return // 確保有輸入、token和uid
+    if (!userText || !accessToken.value || !uid) return
 
     const timestamp = new Date().toISOString()
     messages.value.push({ sender: 'user', text: userText, createdAt: timestamp })
@@ -34,9 +34,8 @@ export function useChatService(
       if (!history || history.length === 0) {
         console.warn('⚠️ 沒有找到歷史對話，將使用空陣列')
       }
-      // deploy時請改成以下
+      //deploy
       const response = await fetch(`/api/test`, {
-        // local
         // const response = await fetch(`http://localhost:5000/api/test`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -45,17 +44,32 @@ export function useChatService(
           history: history,
           accessToken: accessToken.value,
         }),
-        mode: 'cors', // 確保支援跨域
+        mode: 'cors',
       })
 
       if (!response.ok) throw new Error(`HTTP 錯誤！狀態碼: ${response.status}`)
+
+      const data = await response.json()
+      const aiText = data.reply[0]
+      const metadata = data.reply[1]
+
+      messages.value[messages.value.length - 1] = {
+        sender: 'ai',
+        text: aiText,
+        createdAt: new Date().toISOString(),
+      }
+
+      messagePairs.value.push({ user: userText, ai: aiText, metadata })
+      await saveConversationToFirestore(uid, messagePairs.value)
+      // await saveChatHistoryToRTDB(uid, [...history, ...messagePairs.value])
+      messagePairs.value = []
     } catch (err: any) {
       console.error('❌API打失敗:', err)
-      messages.value[messages.value.length - 1] = {
+      messages.value.push({
         sender: 'ai',
         text: '⚠️ 系統錯誤，請稍後再試\n' + (err?.message ?? ''),
         createdAt: new Date().toISOString(),
-      }
+      })
     } finally {
       isThinking.value = false
     }

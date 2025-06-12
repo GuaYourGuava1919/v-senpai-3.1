@@ -30,6 +30,7 @@ def test():
     
     reply = get_openai_response(access_token, user_input, history)
     
+    print("✅ 即將回傳資料：", reply)
     return jsonify({"reply": reply}), 200
         
 if __name__ == "__main__":
