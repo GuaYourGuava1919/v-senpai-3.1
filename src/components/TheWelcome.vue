@@ -3,33 +3,31 @@
     class="flex justify-center items-center min-h-screen bg-gradient-to-br from-[#fdfefe] to-[#f5f7fa] sm:px-6 py-10 text-gray-800"
   >
     <div class="text-center w-full max-w-xl p-10">
-      <h1 class="text-3xl sm:text-4xl font-extrabold mb-4 leading-snug">
-        歡迎來到 <span class="text-primary-500 animate-pulse">V-Senpai</span> 🎓
-      </h1>
+      <h1 class="text-3xl sm:text-4xl font-extrabold mb-4 leading-snug">V-Senpai 已搬新家 🎓</h1>
 
       <p class="text-base sm:text-lg text-gray-600 mb-4">
-        我是你的學長姐小助手，幫你解答系統分析與專題相關的疑惑
+        我們已升級至全新網站，提供更穩定的服務與體驗 ✨
       </p>
 
-      <p class="text-sm sm:text-base text-gray-700 mb-3 leading-relaxed">
-        請先登入 GitHub，並在授權畫面確認授權給
-        <span class="font-semibold text-indigo-500">GuaYourGuava1919</span>。
+      <p class="text-sm sm:text-base text-gray-700 mb-6 leading-relaxed">
+        請前往新的入口繼續使用：
       </p>
 
-      <p class="text-xs sm:text-sm text-gray-500 italic mb-6">
-        📝 阿緹的論文需要你❤️（5/4 已開放回饋功能）
-      </p>
+      <a
+        href="https://senpai-40.vercel.app/"
+        target="_blank"
+        class="inline-block px-6 py-3 rounded-xl bg-primary-500 text-white font-semibold shadow-md hover:scale-105 hover:bg-primary-600 transition"
+      >
+        前往新網站 →
+      </a>
 
-      <ImageCarousel class="mb-6" />
+      <p class="text-xs sm:text-sm text-gray-400 mt-6 italic">舊網站將不再更新，感謝您的支持 ❤️</p>
+
+      <ImageCarousel class="mt-8" />
     </div>
   </div>
 </template>
 
 <script setup>
 import ImageCarousel from '@/components/ImageCarousel.vue'
-
-// 範例點擊用：可改為打開文件連結
-function goToDocs() {
-  window.open('https://your-doc-link.example.com', '_blank')
-}
 </script>

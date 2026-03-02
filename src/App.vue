@@ -7,11 +7,11 @@ import HelloWorld from './components/HelloWorld.vue'
 
 <template>
   <div class="min-h-screen flex flex-col">
-    <Header />
+    <!-- <Header /> -->
     <div class="flex flex-col flex-1">
       <RouterView />
     </div>
-    <Footer />
+    <!-- <Footer /> -->
   </div>
 </template>
 

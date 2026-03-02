@@ -8,41 +8,41 @@ const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     { path: '/', name: 'home', component: HomeView },
-    {
-      path: '/chat',
-      name: 'chat',
-      component: () => import('../views/ChatView.vue'),
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/feedback',
-      name: 'feedback',
-      component: () => import('../views/FeedbackView.vue'),
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/personal',
-      name: 'personal',
-      component: () => import('../views/PersonalView.vue'),
-      meta: { requiresAuth: true },
-    },
-    {
-      path: '/feedback-review',
-      component: () => import('@/views/FeedbackReviewView.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true },
-    },
-    {
-      path: '/signup-list',
-      name: 'signup-list',
-      component: () => import('@/views/SignupListView.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true },
-    },
-    {
-      path: '/user-messages/:uid',
-      name: 'user-messages',
-      component: () => import('@/views/UserMessagesView.vue'),
-      meta: { requiresAuth: true, requiresAdmin: true },
-    },
+    // {
+    //   path: '/chat',
+    //   name: 'chat',
+    //   component: () => import('../views/ChatView.vue'),
+    //   meta: { requiresAuth: true },
+    // },
+    // {
+    //   path: '/feedback',
+    //   name: 'feedback',
+    //   component: () => import('../views/FeedbackView.vue'),
+    //   meta: { requiresAuth: true },
+    // },
+    // {
+    //   path: '/personal',
+    //   name: 'personal',
+    //   component: () => import('../views/PersonalView.vue'),
+    //   meta: { requiresAuth: true },
+    // },
+    // {
+    //   path: '/feedback-review',
+    //   component: () => import('@/views/FeedbackReviewView.vue'),
+    //   meta: { requiresAuth: true, requiresAdmin: true },
+    // },
+    // {
+    //   path: '/signup-list',
+    //   name: 'signup-list',
+    //   component: () => import('@/views/SignupListView.vue'),
+    //   meta: { requiresAuth: true, requiresAdmin: true },
+    // },
+    // {
+    //   path: '/user-messages/:uid',
+    //   name: 'user-messages',
+    //   component: () => import('@/views/UserMessagesView.vue'),
+    //   meta: { requiresAuth: true, requiresAdmin: true },
+    // },
   ],
 })
 
