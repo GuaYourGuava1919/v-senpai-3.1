@@ -4,7 +4,7 @@
     <div class="flex-1 overflow-y-auto">
       <ChatBox :messages="messages" />
     </div>
-    <!-- <SuggestedQuestions
+    <SuggestedQuestions
       :questions="[
         '從系統分析與設計課程中遇到什麼問題？如何解決？',
         '使用 git 嗎？',
@@ -14,7 +14,7 @@
         '對各位的建議是？',
       ]"
       @select="handleSuggestedQuestion"
-    /> -->
+    />
     <!-- 輸入框區 -->
     <div class="bg-white px-4 py-3 shadow-md w-full">
       <div class="flex items-center gap-2 max-w-4xl mx-auto">
@@ -42,7 +42,7 @@ import { useChatService } from '@/composables/useChatService'
 import { watchFirestoreMessages } from '@/composables/services/chatFirestoreService'
 import { onAuthStateChanged } from 'firebase/auth'
 import { auth } from '@/config/firebaseConfig'
-// import SuggestedQuestions from '../components/chat/SuggestedQuestions.vue'
+import SuggestedQuestions from '../components/chat/SuggestedQuestions.vue'
 
 // 狀態
 const input = ref('')
